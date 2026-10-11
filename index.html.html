@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O que mudou com a nova CNH do Brasil? (interativa)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--amarelo:#fbbf3c;--bege:#eee6d0;--aviso:#fff0d2;--texto:#141414;--leve:#dcebd6;--media:#fbe3a0;--grave:#f2b078;--gravissima:#a82a20;--ok:#2f7a3d;--erro:#a82a20}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:5.5rem}
+  body{margin:0;background:var(--bege);color:var(--texto);font-family:Poppins,"Segoe UI",Arial,sans-serif;line-height:1.55}
+  .wrap{max-width:980px;margin:auto;padding:0 1rem}
+  button{font:inherit;color:inherit;cursor:pointer}
+  :focus-visible{outline:3px solid var(--texto);outline-offset:2px}
+  header.capa{background:var(--amarelo);padding:2.2rem 0 1.6rem}
+  header.capa .wrap{display:flex;justify-content:space-between;align-items:flex-start;gap:1.5rem;flex-wrap:wrap}
+  h1{margin:0;font-size:clamp(1.9rem,5vw,3rem);line-height:1.1;font-weight:800;text-transform:uppercase;max-width:15ch}
+  header.capa p{margin:.9rem 0 0}
+  .brasao{display:flex;align-items:center;gap:.6rem;font-size:.72rem;font-weight:700;line-height:1.2}
+  .brasao svg{width:52px;height:52px}
+  .brasao span{border-left:2px solid var(--texto);padding-left:.6rem;max-width:9ch}
+
+  /* barra de ferramentas */
+  .barra{position:sticky;top:0;z-index:10;background:var(--texto);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .barra .wrap{display:flex;gap:.7rem;align-items:center;padding-top:.6rem;padding-bottom:.6rem;flex-wrap:wrap}
+  .busca{flex:1 1 220px;display:flex}
+  .busca input{width:100%;border:0;border-radius:999px;padding:.5rem 1rem;font:inherit;font-size:.9rem}
+  .barra .bt{background:var(--amarelo);color:var(--texto);border:0;border-radius:999px;padding:.45rem 1rem;font-weight:700;font-size:.82rem}
+  .barra a{color:#fff;font-size:.82rem;font-weight:600}
+  .mini{font-size:.82rem;font-weight:600;margin-left:auto}
+
+  main.wrap{padding-bottom:1rem}
+  .faixa{background:var(--amarelo);font-weight:800;text-transform:uppercase;padding:1.1rem 0;font-size:1.05rem;margin:2rem -1rem 0}
+  .faixa .wrap{padding-left:1rem}
+  section.bloco{padding:1.8rem 0}
+  .grade{display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem;align-items:start}
+  .cartao{background:#fff;border-radius:28px;padding:1.2rem 1.6rem 1.4rem}
+  .cartao.largo{grid-column:1/-1}
+  .cartao[hidden]{display:none}
+  .cartao h2{margin:0}
+  .cab{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:.7rem;width:100%;cursor:pointer;font-size:1.2rem;font-weight:700;padding:.2rem 0;border-radius:12px}
+  .cab:focus-visible{outline:3px solid var(--texto);outline-offset:3px}
+  .num{flex:none;width:2rem;height:2rem;border-radius:50%;background:var(--amarelo);display:grid;place-items:center;font-size:.9rem;font-weight:800}
+  .tit{flex:1}
+  .seta{width:.7rem;height:.7rem;border-right:3px solid var(--texto);border-bottom:3px solid var(--texto);transform:rotate(45deg);transition:transform .2s;margin-right:.3rem}
+  .cab[aria-expanded="true"] .seta{transform:rotate(-135deg)}
+  .selo{display:inline-block;background:var(--amarelo);font-weight:800;text-transform:uppercase;font-size:1.2rem;padding:.4rem 1.3rem;border-radius:999px;margin:.8rem 0 .2rem}
+  .corpo{display:grid;grid-template-rows:0fr;transition:grid-template-rows .25s}
+  .corpo.aberto{grid-template-rows:1fr}
+  .corpo>div{overflow:hidden}
+  .corpo p{margin:.6rem 0 0;font-size:.95rem}
+  .aviso{display:flex;gap:.6rem;align-items:flex-start;background:var(--aviso);border-radius:14px;padding:.8rem 1rem;margin-top:1rem;font-size:.88rem}
+  .aviso svg{flex:none;width:1.4rem;height:1.4rem;margin-top:.1rem}
+  .chips{display:flex;flex-wrap:wrap;gap:.6rem;margin:.8rem 0}
+  .chip{font-size:.8rem;font-weight:700;padding:.4rem .9rem;border-radius:999px;border:0}
+  .leve{background:var(--leve)}.media{background:var(--media)}.grave{background:var(--grave)}.gravissima{background:var(--gravissima);color:#fff}
+
+  /* ferramentas interativas dentro dos cartões */
+  .lab{background:var(--bege);border-radius:18px;padding:1rem 1.1rem;margin-top:1rem}
+  .lab h3{margin:0 0 .5rem;font-size:.95rem}
+  .lab .chip{cursor:pointer;transition:transform .1s}
+  .lab .chip:active{transform:scale(.95)}
+  .lab .chip b{background:rgba(0,0,0,.15);border-radius:999px;padding:0 .45rem;margin-left:.3rem}
+  .medidor{position:relative;height:1.1rem;background:#fff;border-radius:999px;overflow:hidden;margin:.8rem 0 .4rem}
+  .medidor i{display:block;height:100%;width:0;background:var(--ok);transition:width .25s,background .25s}
+  .medidor i.ruim{background:var(--erro)}
+  .medidor::after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:3px dashed var(--texto)}
+  .res{font-weight:700;font-size:.95rem}
+  .res.ok{color:var(--ok)}.res.ruim{color:var(--erro)}
+  .acoes{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.6rem}
+  .sec{background:#fff;border:2px solid var(--texto);border-radius:999px;padding:.3rem .9rem;font-size:.8rem;font-weight:700}
+  input[type=range]{width:100%;accent-color:var(--texto)}
+
+  /* tabela / checklist */
+  .tabela{background:#fff;border-radius:28px;overflow:hidden}
+  .tabela h2{background:var(--amarelo);margin:0;text-align:center;font-size:1.7rem;font-weight:800;text-transform:uppercase;padding:1rem}
+  .prog{padding:1rem 1.6rem 0;font-size:.9rem;font-weight:600}
+  .prog .medidor::after{display:none}
+  .prog .medidor{height:.9rem;background:var(--bege)}
+  .tabela dl{margin:0;padding:.3rem 1.6rem 1rem}
+  .linha{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1.4fr);gap:1rem;align-items:center;padding:.8rem 0;border-bottom:1.5px solid var(--texto);cursor:pointer}
+  .linha[hidden]{display:none}
+  .linha input{width:1.4rem;height:1.4rem;accent-color:var(--ok);cursor:pointer}
+  .linha dt{font-weight:800;text-transform:uppercase;font-size:1.02rem}
+  .linha dd{margin:0;font-size:.9rem}
+  .linha.feito dt{text-decoration:line-through;opacity:.55}
+  .linha.feito dd{opacity:.55}
+  .contato{margin:0 1.6rem 1.4rem}.contato .aviso{margin:0;font-size:1rem;font-weight:700}
+  .vazio{text-align:center;padding:2rem;font-weight:600}
+  footer{padding:1.5rem 0 2rem;font-size:.78rem}
+  @media (max-width:720px){
+    .grade{grid-template-columns:1fr}
+    .linha{grid-template-columns:auto 1fr;gap:.3rem .8rem}
+    .linha dd{grid-column:2}
+    .mini{margin-left:0}
+    .selo{font-size:1rem}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="alerta" viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2Z" fill="#ffd21f" stroke="#141414" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9v6" stroke="#141414" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.8" r="1.1" fill="#141414"/></symbol>
+  <symbol id="estrela" viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#4a7a2a" stroke-width="4"/><path d="m32 14 5 12h13l-10.500 8 4 13L32 39l-11.500 8 4-13L14 26h13z" fill="#fbbf3c" stroke="#a82a20" stroke-width="2" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="capa">
+  <div class="wrap">
+    <div>
+      <h1>O que mudou com a nova CNH do Brasil?</h1>
+      <p><strong>Guia rápido</strong> para quem vai tirar a primeira habilitação em Minas Gerais</p>
+    </div>
+    <div class="brasao"><svg><use href="#estrela"/></svg><span>DEPARTAMENTO ESTADUAL DE TRÂNSITO</span></div>
+  </div>
+</header>
+
+<div class="barra" role="search">
+  <div class="wrap">
+    <label class="busca"><span class="sr" style="position:absolute;left:-9999px">Buscar na cartilha</span><input id="busca" type="search" placeholder="Buscar: toxicológico, baliza, prazo..."></label>
+    <button class="bt" id="abrirTudo" type="button">Expandir tudo</button>
+    <button class="bt" id="fecharTudo" type="button">Recolher tudo</button>
+    <a href="#simulador">Simulador</a>
+    <a href="#onde">Meu progresso</a>
+    <span class="mini" id="mini" aria-live="polite"></span>
+  </div>
+</div>
+
+<main class="wrap">
+<section class="bloco" aria-label="Mudanças 1 a 4">
+  <div class="grade">
+
+    <article class="cartao" data-t="prazo concluir 12 meses sem prazo exames validade">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b1"><span class="num">1</span><span class="tit">Sem prazo para concluir</span><span class="seta"></span></button></h2>
+      <div class="selo">Sem prazo</div>
+      <div class="corpo aberto" id="b1"><div>
+        <p><strong>Antes:</strong> 12 meses para terminar o processo. <strong>Agora:</strong> sem prazo para tirar a sua carteira. Você avança no seu ritmo.</p>
+        <p>Se já passou de 12 meses, você <strong>não precisa recomeçar do zero</strong>.</p>
+        <div class="aviso"><svg><use href="#alerta"/></svg><span>Os exames continuam tendo prazo de validade. Confira o prazo no site do DETRAN-MG.</span></div>
+      </div></div>
+    </article>
+
+    <article class="cartao" data-t="curso teórico grátis aplicativo carga horária taxas">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b2"><span class="num">2</span><span class="tit">Curso teórico</span><span class="seta"></span></button></h2>
+      <div class="selo">Grátis</div>
+      <div class="corpo aberto" id="b2"><div>
+        <p>Faça o curso teórico <strong>de graça</strong> no aplicativo <strong>CNH do Brasil.</strong></p>
+        <p>Não existe mais carga horária mínima.</p>
+        <div class="aviso"><svg><use href="#alerta"/></svg><span>Começar pelo aplicativo <strong>não dispensa</strong> as demais etapas, como pagamento de taxas, exames e provas.</span></div>
+      </div></div>
+    </article>
+
+    <article class="cartao" data-t="prova de legislação 20 acertos 30 questões aprovado">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b3"><span class="num">3</span><span class="tit">Prova de legislação</span><span class="seta"></span></button></h2>
+      <div class="selo">20 acertos</div>
+      <div class="corpo aberto" id="b3"><div>
+        <p>Você precisa de ter <strong>20 acertos ou mais</strong> para ser <strong>aprovado</strong> em uma prova de <strong>30 questões</strong>.</p>
+        <div class="lab">
+          <h3>Teste: quantos acertos?</h3>
+          <input type="range" id="acertos" min="0" max="30" value="20" aria-label="Número de acertos de 0 a 30">
+          <div class="medidor"><i id="barAc"></i></div>
+          <div class="res" id="resAc" aria-live="polite"></div>
+        </div>
+      </div></div>
+    </article>
+
+    <article class="cartao" data-t="aulas práticas 2 horas autoescola instrutor autônomo categoria">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b4"><span class="num">4</span><span class="tit">Aulas práticas</span><span class="seta"></span></button></h2>
+      <div class="selo">2 horas</div>
+      <div class="corpo aberto" id="b4"><div>
+        <p>O mínimo é de <strong>2 horas de aula por categoria</strong>. Moto e carro juntos: 4 horas.</p>
+        <div class="lab">
+          <h3>Calcule as horas mínimas</h3>
+          <label><input type="checkbox" class="cat" checked> Carro (B)</label>&nbsp;&nbsp;
+          <label><input type="checkbox" class="cat"> Moto (A)</label>
+          <div class="res" id="resHoras" aria-live="polite" style="margin-top:.5rem"></div>
+        </div>
+        <p>As aulas podem ser feitas com uma <strong>autoescola</strong> ou com um <strong>instrutor autônomo</strong>. O valor é combinado com quem você contratar.</p>
+        <div class="aviso"><span><strong>Dica:</strong> antes de contratar, confira se o instrutor está cadastrado no DETRAN-MG.</span></div>
+      </div></div>
+    </article>
+  </div>
+</section>
+
+<div class="faixa"><div class="wrap">Mudanças com a nova CNH do Brasil</div></div>
+
+<section class="bloco" aria-label="Mudanças 5 a 7">
+  <div class="grade">
+
+    <article class="cartao largo" id="simulador" data-t="prova de direção pontos leve média grave gravíssima simulador aprovado">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b5"><span class="num">5</span><span class="tit">Prova de direção</span><span class="seta"></span></button></h2>
+      <div class="selo">Até 10 pontos</div>
+      <div class="corpo aberto" id="b5"><div>
+        <p>Você começa a prova com <strong>0 pontos</strong>. Cada erro acrescenta pontos, conforme a gravidade:</p>
+        <div class="chips">
+          <span class="chip leve">Leve 1 ponto</span><span class="chip media">Média 2 pontos</span>
+          <span class="chip grave">Grave 4 pontos</span><span class="chip gravissima">Gravíssima 6 pontos</span>
+        </div>
+        <p>Com <strong>10 pontos ou menos, você é aprovado na prova de direção</strong>.</p>
+        <div class="aviso"><span><strong>Exemplo:</strong> 10 pontos não significam 10 erros. Uma infração gravíssima (6) + uma grave (4) = 10 pontos: você passa. Se tiver mais uma infração leve (1), você fica com 11 pontos e não passa.</span></div>
+        <div class="lab">
+          <h3>Simulador: toque para registrar um erro</h3>
+          <div class="chips">
+            <button class="chip leve" data-p="1" data-k="0" type="button">Leve <b>0</b></button>
+            <button class="chip media" data-p="2" data-k="1" type="button">Média <b>0</b></button>
+            <button class="chip grave" data-p="4" data-k="2" type="button">Grave <b>0</b></button>
+            <button class="chip gravissima" data-p="6" data-k="3" type="button">Gravíssima <b>0</b></button>
+          </div>
+          <div class="medidor"><i id="barPts"></i></div>
+          <div class="res" id="resPts" aria-live="polite"></div>
+          <div class="acoes"><button class="sec" id="desfaz" type="button">Desfazer último</button><button class="sec" id="limpa" type="button">Zerar</button></div>
+        </div>
+      </div></div>
+    </article>
+
+    <article class="cartao largo" data-t="veículos automáticos particulares câmbio automático manual treinar">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b6"><span class="num">6</span><span class="tit">Uso de veículos automáticos ou particulares</span><span class="seta"></span></button></h2>
+      <div class="selo">Câmbio automático</div>
+      <div class="corpo aberto" id="b6"><div>
+        <p>O exame prático agora <strong>pode ser realizado em carros com câmbio automático</strong>. Além disso, é <strong>permitido treinar com veículos próprios ou indicados</strong>, desde que devidamente credenciados.</p>
+        <div class="lab">
+          <h3>Em que carro vou fazer a prova?</h3>
+          <div class="chips"><button class="chip media" data-c="a" type="button">Automático</button><button class="chip leve" data-c="m" type="button">Manual</button></div>
+          <div class="res" id="resCambio" aria-live="polite">Escolha uma opção.</div>
+        </div>
+        <div class="aviso"><svg><use href="#alerta"/></svg><span>Se a prova de direção for feita com câmbio automático, a carteira será válida somente para carros automáticos. Para dirigir carros automáticos e manuais, será necessário fazer a prova em um carro manual.</span></div>
+      </div></div>
+    </article>
+
+    <article class="cartao largo" data-t="baliza reprovação automática estacionamento paralelo pontuação">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b7"><span class="num">7</span><span class="tit">Fim da reprovação automática na baliza</span><span class="seta"></span></button></h2>
+      <div class="selo">Sem medo de baliza</div>
+      <div class="corpo aberto" id="b7"><div>
+        <p>Errar na baliza (estacionamento paralelo) <strong>não reprova mais o candidato de imediato</strong>. Essa etapa deixou de ser separada. Agora ela faz parte do percurso da prova.</p>
+        <div class="aviso"><span>Os erros agora entram na contagem geral da nova pontuação (limite de até 10 pontos).</span></div>
+      </div></div>
+    </article>
+  </div>
+</section>
+
+<div class="faixa"><div class="wrap">Mudanças com a nova CNH do Brasil</div></div>
+
+<section class="bloco" aria-label="Mudanças 8 a 11">
+  <div class="grade">
+    <article class="cartao" data-t="agendamento exame internet site autoescola">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b8"><span class="num">8</span><span class="tit">Agendamento do exame</span><span class="seta"></span></button></h2>
+      <div class="selo">Via internet</div>
+      <div class="corpo aberto" id="b8"><div>
+        <p>Você mesmo pode <strong>agendar o exame de legislação e a prova prática pela internet</strong>, diretamente no site do Detran-MG, depois de ser aprovado nas outras etapas. Não é necessário depender da autoescola para fazer o agendamento.</p>
+      </div></div>
+    </article>
+
+    <article class="cartao" data-t="canal cadastro site aplicativo pedido">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b9"><span class="num">9</span><span class="tit">Comece por um canal só</span><span class="seta"></span></button></h2>
+      <div class="selo">1 canal</div>
+      <div class="corpo aberto" id="b9"><div>
+        <p>Você pode começar o cadastro pelo <strong>site do DETRAN-MG</strong> ou pelo <strong>aplicativo CNH do Brasil</strong>.</p>
+        <div class="aviso"><svg><use href="#alerta"/></svg><span>Não é possível iniciar dois pedidos para o mesmo processo.</span></div>
+      </div></div>
+    </article>
+
+    <article class="cartao" id="toxi" data-t="exame toxicológico negativo ppd senatran laboratório 20/06/2026">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b10"><span class="num">10</span><span class="tit">Exame toxicológico</span><span class="seta"></span></button></h2>
+      <div class="selo">Resultado negativo</div>
+      <div class="corpo aberto" id="b10"><div>
+        <p>Para receber a <strong>Permissão para Dirigir (PPD)</strong> é necessário apresentar exame toxicológico negativo para quem iniciou a primeira habilitação <strong>a partir de 20/06/2026</strong> ou recomeçou o processo após perder a PPD.</p>
+        <div class="lab">
+          <h3>Preciso fazer o exame?</h3>
+          <label for="dtIni">Data em que iniciei a 1ª habilitação:</label><br>
+          <input type="date" id="dtIni" style="margin-top:.3rem;padding:.3rem .5rem;border-radius:8px;border:1px solid #999;font:inherit">
+          <label style="display:block;margin-top:.5rem"><input type="checkbox" id="perdeu"> Perdi a PPD e recomecei o processo</label>
+          <div class="res" id="resTox" aria-live="polite" style="margin-top:.5rem">Informe a data.</div>
+        </div>
+        <div class="aviso"><svg><use href="#alerta"/></svg><span>Faça o exame somente <strong>após a aprovação na prova de direção</strong>, em laboratório credenciado pela Senatran.</span></div>
+      </div></div>
+    </article>
+
+    <article class="cartao" data-t="licença de aprendizagem digital aplicativo aula prática">
+      <h2><button class="cab" aria-expanded="true" aria-controls="b11"><span class="num">11</span><span class="tit">Licença de Aprendizagem</span><span class="seta"></span></button></h2>
+      <div class="selo">Digital</div>
+      <div class="corpo aberto" id="b11"><div>
+        <p>Quando você for aprovado na prova de legislação, receberá sua <strong>Licença de Aprendizagem</strong>, que é emitida exclusivamente em formato <strong>digital.</strong></p>
+        <div class="aviso"><svg><use href="#alerta"/></svg><span>Veja no app <strong>CNH do Brasil</strong>. Sem ela, você não pode ter aula prática na rua.</span></div>
+      </div></div>
+    </article>
+  </div>
+</section>
+
+<p class="vazio" id="vazio" hidden>Nada encontrado para essa busca.</p>
+
+<div class="faixa"><div class="wrap">Mudanças com a nova CNH do Brasil</div></div>
+
+<section class="bloco" id="onde" aria-label="Onde fazer cada etapa">
+  <div class="tabela">
+    <h2>Onde fazer cada etapa</h2>
+    <div class="prog">
+      <span id="progTxt">0 de 9 etapas concluídas</span>
+      <div class="medidor"><i id="progBar"></i></div>
+      <button class="sec" id="zeraProg" type="button">Limpar marcações</button>
+      <span style="font-weight:400;font-size:.8rem;margin-left:.4rem">Marque o que você já fez. Fica salvo neste navegador.</span>
+    </div>
+    <dl id="lista">
+      <label class="linha"><input type="checkbox"><dt>Cadastro</dt><dd>Site do DETRAN-MG ou aplicativo CNH do Brasil.</dd></label>
+      <label class="linha"><input type="checkbox"><dt>Curso teórico</dt><dd>Aplicativo CNH do Brasil, autoescola, curso a distância ou escola pública de trânsito.</dd></label>
+      <label class="linha"><input type="checkbox"><dt>Biometria</dt><dd>Presencial, no local indicado pelo DETRAN-MG.</dd></label>
+      <label class="linha"><input type="checkbox"><dt>Exame médico e avaliação psicológica</dt><dd>Clínicas credenciadas. Consulte no site do DETRAN-MG.</dd></label>
+      <label class="linha"><input type="checkbox"><dt>Prova de legislação</dt><dd>DETRAN-MG. Agende pelo site e pague a taxa.</dd></label>
+      <label class="linha"><input type="checkbox"><dt>Aulas práticas</dt><dd>Autoescola ou instrutor autônomo.</dd></label>
+      <label class="linha"><input type="checkbox"><dt>Prova de direção</dt><dd>DETRAN-MG. Agende pelo site e pague a taxa.</dd></label>
+      <label class="linha"><input type="checkbox"><dt>Exame toxicológico</dt><dd>Laboratório credenciado.</dd></label>
+      <label class="linha"><input type="checkbox"><dt>Permissão para dirigir</dt><dd>Versão digital no aplicativo CNH do Brasil.</dd></label>
+    </dl>
+    <div class="contato"><div class="aviso"><svg><use href="#alerta"/></svg><span>Dúvidas? Use o Fale Conosco no site do DETRAN-MG.<br>Confira sempre as informações atualizadas no site oficial.</span></div></div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">Fontes: Resolução Contran nº 1.020/2025, Lei nº 15.153/2025 e DETRAN-MG. Os simuladores são ilustrativos e não substituem a regra oficial.</div></footer>
+
+<script>
+const $ = (s, r=document) => r.querySelector(s), $$ = (s, r=document) => [...r.querySelectorAll(s)];
+
+/* Abrir/fechar cartões */
+function alterna(btn, abrir){
+  const aberto = abrir ?? btn.getAttribute('aria-expanded') !== 'true';
+  btn.setAttribute('aria-expanded', aberto);
+  document.getElementById(btn.getAttribute('aria-controls')).classList.toggle('aberto', aberto);
+}
+$$('.cab').forEach(b => b.onclick = () => alterna(b));
+$('#abrirTudo').onclick = () => $$('.cab').forEach(b => alterna(b, true));
+$('#fecharTudo').onclick = () => $$('.cab').forEach(b => alterna(b, false));
+
+/* Busca */
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+$('#busca').addEventListener('input', e => {
+  const q = norm(e.target.value.trim());
+  let achou = 0;
+  $$('.cartao').forEach(c => {
+    const ok = !q || norm(c.dataset.t + ' ' + c.textContent).includes(q);
+    c.hidden = !ok; if (ok) achou++;
+    if (q && ok) alterna($('.cab', c), true);
+  });
+  $$('#lista .linha').forEach(l => l.hidden = !!q && !norm(l.textContent).includes(q));
+  $('#vazio').hidden = !q || achou > 0 || $$('#lista .linha:not([hidden])').length > 0;
+});
+
+/* Prova de legislação */
+const ac = $('#acertos');
+function atualizaAc(){
+  const n = +ac.value, ok = n >= 20;
+  $('#barAc').style.width = (n/30*100) + '%';
+  $('#barAc').className = ok ? '' : 'ruim';
+  const r = $('#resAc');
+  r.className = 'res ' + (ok ? 'ok' : 'ruim');
+  r.textContent = ok ? `${n} acertos: aprovado.` : `${n} acertos: reprovado. Faltam ${20-n} para os 20 necessários.`;
+}
+ac.oninput = atualizaAc; atualizaAc();
+
+/* Horas de aula */
+function atualizaHoras(){
+  const n = $$('.cat').filter(c => c.checked).length;
+  $('#resHoras').textContent = n === 0 ? 'Marque ao menos uma categoria.' : `Mínimo: ${n*2} horas de aula.`;
+}
+$$('.cat').forEach(c => c.onchange = atualizaHoras); atualizaHoras();
+
+/* Simulador de pontos */
+const pesos = [1,2,4,6], hist = [], cont = [0,0,0,0];
+function atualizaPts(){
+  const pts = hist.reduce((a,p) => a + pesos[p], 0), ok = pts <= 10;
+  $$('[data-k]').forEach(b => $('b', b).textContent = cont[+b.dataset.k]);
+  $('#barPts').style.width = Math.min(pts, 20)/20*100 + '%';
+  $('#barPts').className = ok ? '' : 'ruim';
+  const r = $('#resPts');
+  r.className = 'res ' + (ok ? 'ok' : 'ruim');
+  r.textContent = `${pts} ponto${pts===1?'':'s'}: ${ok ? 'aprovado' : 'reprovado'}` + (ok ? ` (margem de ${10-pts})` : ` (${pts-10} acima do limite)`) + '.';
+}
+$$('[data-k]').forEach(b => b.onclick = () => { const k = +b.dataset.k; hist.push(k); cont[k]++; atualizaPts(); });
+$('#desfaz').onclick = () => { const k = hist.pop(); if (k !== undefined) cont[k]--; atualizaPts(); };
+$('#limpa').onclick = () => { hist.length = 0; cont.fill(0); atualizaPts(); };
+atualizaPts();
+
+/* Câmbio */
+$$('[data-c]').forEach(b => b.onclick = () => {
+  $('#resCambio').textContent = b.dataset.c === 'a'
+    ? 'Prova em carro automático: a carteira valerá somente para carros automáticos.'
+    : 'Prova em carro manual: a carteira vale para carros manuais e automáticos.';
+});
+
+/* Toxicológico */
+function atualizaTox(){
+  const d = $('#dtIni').value, r = $('#resTox');
+  if (!d && !$('#perdeu').checked){ r.className = 'res'; r.textContent = 'Informe a data.'; return; }
+  const exige = $('#perdeu').checked || d >= '2026-06-20';
+  r.className = 'res ' + (exige ? 'ruim' : 'ok');
+  r.textContent = exige
+    ? 'Pela cartilha, o exame toxicológico negativo é necessário para receber a PPD.'
+    : 'Pela cartilha, a exigência vale para quem começou a partir de 20/06/2026. Confirme seu caso no DETRAN-MG.';
+}
+$('#dtIni').onchange = atualizaTox; $('#perdeu').onchange = atualizaTox;
+
+/* Progresso (salvo no navegador) */
+const KEY = 'cnh-progresso', itens = $$('#lista .linha');
+let salvo = [];
+try { salvo = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e){}
+function atualizaProg(){
+  const marc = itens.map(l => $('input', l).checked);
+  itens.forEach((l,i) => l.classList.toggle('feito', marc[i]));
+  const n = marc.filter(Boolean).length;
+  $('#progTxt').textContent = `${n} de ${itens.length} etapas concluídas`;
+  $('#progBar').style.width = (n/itens.length*100) + '%';
+  $('#mini').textContent = `Progresso: ${n}/${itens.length}`;
+  try { localStorage.setItem(KEY, JSON.stringify(marc)); } catch(e){}
+}
+itens.forEach((l,i) => { const c = $('input', l); c.checked = !!salvo[i]; c.onchange = atualizaProg; });
+$('#zeraProg').onclick = () => { itens.forEach(l => $('input', l).checked = false); atualizaProg(); };
+atualizaProg();
+</script>
+</body>
+</html>
