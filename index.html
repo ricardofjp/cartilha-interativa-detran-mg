@@ -480,7 +480,7 @@
   <article class="cartao" id="onde" aria-label="Onde fazer cada etapa" data-t="onde fazer cada etapa progresso checklist">
     <h2 class="cab fixo"><span class="num"><svg class="ic" viewBox="0 0 24 24"><use href="#i3"/></svg></span><span class="tit">Onde fazer cada etapa</span><span class="selo">Meu progresso</span></h2>
     <div class="prog">
-      <span id="progTxt">0 de 7 etapas concluídas</span>
+      <span id="progTxt">0 de 9 etapas concluídas</span>
       <div class="medidor"><i id="progBar"></i></div>
       <div class="rodape">
         <button class="sec" id="zeraProg" type="button">Limpar marcações</button>
@@ -489,21 +489,23 @@
     </div>
     <div class="checklist">
     <ul id="lista">
-      <li><label class="linha"><input type="checkbox"><strong class="et">Cadastro</strong><span class="de">Site do DETRAN-MG ou aplicativo CNH do Brasil.</span></label></li>
-      <li><label class="linha"><input type="checkbox"><strong class="et">Curso teórico</strong><span class="de">Aplicativo CNH do Brasil, curso a distância ou Centro de Formação de Condutores (CFC) / Autoescola.</span></label></li>
-      <li><label class="linha"><input type="checkbox"><strong class="et">Biometria, exame médico e avaliação psicológica</strong><span class="de">Tudo na mesma clínica credenciada: além do exame médico e da avaliação psicológica, é lá que são coletadas a fotografia, a assinatura e as impressões digitais (biometria). Consulte as clínicas credenciadas no site do DETRAN-MG.</span></label></li>
-      <li><label class="linha"><input type="checkbox"><strong class="et">Prova de legislação</strong><span class="de">DETRAN-MG. Agende pelo site e pague a taxa.</span></label></li>
-      <li><label class="linha"><input type="checkbox"><strong class="et">Aulas práticas</strong><span class="de">Autoescola ou instrutor autônomo.</span></label></li>
-      <li><label class="linha"><input type="checkbox"><strong class="et">Prova de direção</strong><span class="de">DETRAN-MG. Agende pelo site e pague a taxa.</span></label></li>
+      <li><label class="linha"><input type="checkbox"><strong class="et">Cadastro inicial</strong><span class="de">Site do DETRAN-MG, com sua conta gov.br. Preencha o cadastro e pague a taxa.</span></label></li>
+      <li><label class="linha"><input type="checkbox"><strong class="et">Coleta de fotos e digitais</strong><span class="de">Na mesma clínica do exame médico e da avaliação psicológica: a coleta de foto, assinatura e digitais (biometria) é feita junto com esses exames. O sistema escolhe a clínica de acordo com a sua região. Agende depois da confirmação do pagamento da taxa de cadastro.</span></label></li>
+      <li><label class="linha"><input type="checkbox"><strong class="et">Exame médico e avaliação psicológica</strong><span class="de">Na mesma clínica da coleta de foto, assinatura e digitais (biometria), no mesmo dia agendado. A clínica envia o resultado direto ao DETRAN-MG, e você pode consultá-lo no site.</span></label></li>
+      <li><label class="linha"><input type="checkbox"><strong class="et">Curso teórico</strong><span class="de">Aplicativo CNH do Brasil (gratuito) ou Centro de Formação de Condutores (CFC) / Autoescola.</span></label></li>
+      <li><label class="linha"><input type="checkbox"><strong class="et">Prova teórica</strong><span class="de">DETRAN-MG. Agende pelo site e pague a taxa.</span></label></li>
+      <li><label class="linha"><input type="checkbox"><strong class="et">Curso prático</strong><span class="de">Autoescola ou instrutor autônomo credenciado.</span></label></li>
+      <li><label class="linha"><input type="checkbox"><strong class="et">Prova prática</strong><span class="de">DETRAN-MG. Agende pelo site e pague a taxa.</span></label></li>
       <li><label class="linha"><input type="checkbox"><strong class="et">Exame toxicológico</strong><span class="de">Laboratório credenciado.</span></label></li>
+      <li><label class="linha"><input type="checkbox"><strong class="et">Receber a CNH</strong><span class="de">Receba a Permissão para Dirigir (PPD). Acompanhe a entrega do documento pelo site do DETRAN-MG.</span></label></li>
     </ul>
     <aside class="painel" aria-label="Seu progresso">
       <div class="tile" id="cnhViva" role="img" aria-label="Sua CNH do Brasil ganha cor conforme você conclui as etapas">
         <div class="area"><div class="foto base"></div><div class="foto cor" id="cnhCor"></div></div>
-        <span class="cont" id="cnhCont">0/7</span>
+        <span class="cont" id="cnhCont">0/9</span>
         <span class="pronto">Tudo pronto</span>
       </div>
-      <div class="pmeta"><strong id="pmTxt">0 de 7 etapas</strong><span class="okcel">Tudo pronto!</span><div class="medidor"><i id="pmBar"></i></div></div>
+      <div class="pmeta"><strong id="pmTxt">0 de 9 etapas</strong><span class="okcel">Tudo pronto!</span><div class="medidor"><i id="pmBar"></i></div></div>
     </aside>
     </div>
     <div class="fim" id="fim" aria-live="polite"><div><div class="caixa-fim"><svg><use href="#certo"/></svg><div><strong class="t">Tudo pronto!</strong><p>Agora é só aguardar a emissão da sua PPD. Você poderá consultá-la no aplicativo <strong>CNH do Brasil</strong>, e o documento físico chegará pelos <strong>Correios</strong>. O prazo oficial de entrega é de <strong>até 10 dias úteis</strong> após a aprovação na prova de direção e a emissão do documento.</p></div></div></div></div>
@@ -682,7 +684,7 @@ $('#perdeu').onchange = () => atualizaTox(true);
 atualizaTox(false);
 
 /* Progresso (salvo no navegador) */
-const KEY = 'cnh-progresso-v2', itens = $$('#lista .linha');
+const KEY = 'cnh-progresso-v3', itens = $$('#lista .linha');
 let salvo = [];
 try { salvo = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e){}
 function atualizaProg(){
